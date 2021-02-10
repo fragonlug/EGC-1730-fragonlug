@@ -1,21 +1,30 @@
 dist: xenial
-
 services:
-  - postgresql
+- postgresql
 addons:
-  postgresql: "9.4"
+  postgresql: '9.4'
 before_script:
-  - psql -U postgres -c "create user decide password 'decide'"
-  - psql -U postgres -c "create database test_decide owner decide"
-  - psql -U postgres -c "ALTER USER decide CREATEDB"
+- psql -U postgres -c "create user decide password 'decide'"
+- psql -U postgres -c "create database test_decide owner decide"
+- psql -U postgres -c "ALTER USER decide CREATEDB"
 language: python
 python:
-  - "3.6"
+- '3.6'
 install:
-  - pip install -r requirements.txt
-  - pip install codacy-coverage
+- pip install -r requirements.txt
 script:
   - cd decide
-  - coverage run --branch --source=. ./manage.py test --keepdb --with-xunit
+  - sudo apt-get install firefox
+  - cp travis_local_settings.py local_settings.py
+  - coverage run --branch --source=. ./manage.py test --keepdb
   - coverage xml
   - python-codacy-coverage -r coverage.xml
+deploy:
+  provider: heroku
+  app: egc-fragonlug
+  strategy: git
+  api-key:
+    secure: jp0juj5UWO2x4pNogZLFFVqg1ZKfytii/sqvDoRJ2lNFXotp0dulzDaTc4EEM+nVjYHJUKnMDqUiPmZHN8pH8A/oL/sBcNL9QvIP5oksPFqLjy/B0xk+HApF3p/23Q45e7hOkZrQj5n5GxCby+xCGGvJajaxwsEXjrBdEKxJVW/vNUyyZSgt6/s/oBQoFLDxwayk9mvU4ZwI/vm7ZtkHZi7GdXoyQ2Xr0dUkI3yB2XoUVKoPZw2RMfH+PZF3ohffwgsXqHWAYsltVE8sD3s2ZvGmK36oVZ3ZpWvGXVO7rq+l2yO2pU/ye0sHRS22RKX6mK7DGdKVyHzLit+3Wmnu1DqN4vRiykxZB62UHApZbEcpV7mJ7MoO/vUEBKRF5pqXEy/+NlqhNH1OX1yj7mUfI75LpHERdYjIlglkn4yYu9EctP7KrmGiLZxytNCrm9AnT9vbtgghHCucFSXyNYU2Ma8eW8aW3vObQlhm7r8XfS5vpULbfq45glbwLN1YUojju6ONoEexeHd4i3RFgUE573qosgetZ6w9toijLfOSENt0CyvOXUsNZEfJmjwOU+BVx2J0PqHAvZ8gHB4U+E9Ik5dp03QW7oGbKdirEK7gWy7uUo2hZufQ10o730IHv5W7Zdj1kzpD8nv02rBcCsIQAy47AnKOr4akQsrQnrW26+M=
+  on:
+    branch: master
+
