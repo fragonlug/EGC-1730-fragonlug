@@ -68,7 +68,7 @@ MODULES = [
     'voting',
 ]
 
-BASEURL = 'https://git.heroku.com/egc-fragonlug.git'
+BASEURL = 'https://egc-fragonlug.herokuapp.com'
 APIS = {}
 
 
